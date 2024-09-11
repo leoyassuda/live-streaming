@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile.app
+    volumes:
+      - ./videos:/app/videos
+      - ./dash:/app/dash
+      - ./hls:/app/hls
+    expose:
+      - "8080"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: dockerfile.nginx
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dash:/usr/share/nginx/html/dash:ro
+      - ./hls:/usr/share/nginx/html/hls:ro
+      - ./videos:/tmp/videos:ro
+    ports:
+      - "80:80"
+      - "1935:1935"
+    depends_on:
+      - app
